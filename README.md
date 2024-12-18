@@ -21,9 +21,11 @@ A TypeScript-based trading agent utilizing Coinbase's CDP (Coinbase Developer Pl
 
 1. Clone the repository:
 
+git clone https://github.com/DzikuDev/TradeAgent.git
 
 2. Install dependencies:
 
+npm install
 
 3. Set up environment variables:
    - Copy `.env.example` to `.env`
@@ -46,6 +48,7 @@ The project uses the following main dependencies:
 
 To start development:
 
+npm run dev
 
 ## Security
 
