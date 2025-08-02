@@ -12,7 +12,7 @@ dotenv.config();
 
 const WALLET_DATA_FILE = "wallet_data.txt";
 
-async function initializeAgent() {
+export async function initializeAgent() {
   const llm = new ChatOpenAI({
     model: "gpt-4o-mini", // Replace or adjust the model if desired
   });
