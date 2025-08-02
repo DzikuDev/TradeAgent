@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trade Agent Chat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <div class="max-w-2xl mx-auto p-4 min-h-screen flex flex-col">
+      <h1 class="text-2xl font-bold mb-4 text-center">Trade Agent Chat</h1>
+      <div id="messages" class="flex-1 overflow-y-auto mb-4 space-y-2"></div>
+      <form id="chat-form" class="flex space-x-2">
+        <input
+          id="input"
+          type="text"
+          class="flex-1 border rounded px-2 py-2"
+          placeholder="Type a message..."
+          required
+        />
+        <button
+          type="submit"
+          class="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Send
+        </button>
+      </form>
+    </div>
+    <script>
+      const messagesEl = document.getElementById('messages');
+      const form = document.getElementById('chat-form');
+      const input = document.getElementById('input');
+
+      function appendMessage(role, text) {
+        const wrapper = document.createElement('div');
+        wrapper.className = role === 'user' ? 'text-right' : 'text-left';
+        const span = document.createElement('span');
+        span.className = role === 'user'
+          ? 'inline-block bg-blue-500 text-white px-3 py-1 rounded-lg'
+          : 'inline-block bg-gray-200 px-3 py-1 rounded-lg';
+        span.textContent = text;
+        wrapper.appendChild(span);
+        messagesEl.appendChild(wrapper);
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+        return span;
+      }
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const message = input.value.trim();
+        if (!message) return;
+        appendMessage('user', message);
+        input.value = '';
+
+        const botSpan = appendMessage('bot', '');
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message })
+        });
+
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          botSpan.textContent += decoder.decode(value);
+          messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+      });
+    </script>
+  </body>
+</html>
+
